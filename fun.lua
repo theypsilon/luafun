@@ -795,6 +795,21 @@ end
 methods.tomap = method0(tomap)
 exports.tomap = export0(tomap)
 
+local totuples = function(gen_x, param_x, state_x)
+    local tab = {}
+    while true do
+        local tuple = {gen_x(param_x, state_x)}
+        state_x = table.remove(tuple, 1)
+        if state_x == nil then
+            break
+        end
+        table.insert(tab, tuple)
+    end
+    return tab
+end
+methods.totuples = method0(totuples)
+exports.totuples = export0(totuples)
+
 --------------------------------------------------------------------------------
 -- Transformations
 --------------------------------------------------------------------------------
@@ -809,6 +824,46 @@ local map = function(fun, gen, param, state)
 end
 methods.map = method1(map)
 exports.map = export1(map)
+
+local values_gen_call = function(state, i, state_x, k, v)
+    if state_x == nil then
+        return nil
+    end
+    return {i + 1, state_x}, v or k
+end
+
+local values_gen = function(param, state)
+    local gen_x, param_x = unpack(param)
+    local i, state_x = unpack(state)
+    return values_gen_call(state, i, gen_x(param_x, state_x))
+end
+
+
+local values = function(gen, param, state)
+    return wrap(values_gen, {gen, param}, {1, state})
+end
+methods.values = method0(values)
+exports.values = export0(values)
+
+local keys_gen_call = function(state, i, state_x, k, v)
+    if state_x == nil then
+        return nil
+    end
+    return {i + 1, state_x}, v and k or i
+end
+
+local keys_gen = function(param, state)
+    local gen_x, param_x = unpack(param)
+    local i, state_x = unpack(state)
+    return keys_gen_call(state, i, gen_x(param_x, state_x))
+end
+
+
+local keys = function(gen, param, state)
+    return wrap(keys_gen, {gen, param}, {1, state})
+end
+methods.keys = method0(keys)
+exports.keys = export0(keys)
 
 local enumerate_gen_call = function(state, i, state_x, ...)
     if state_x == nil then
