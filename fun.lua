@@ -76,7 +76,7 @@ local nil_gen = function(_param, _state)
 end
 
 local string_gen = function(param, state)
-    local state = state + 1
+    state = state + 1
     if state > #param then
         return nil
     end
@@ -87,7 +87,7 @@ end
 local pairs_gen = pairs({ a = 0 }) -- get the generating function from pairs
 local map_gen = function(tab, key)
     local value
-    local key, value = pairs_gen(tab, key)
+    key, value = pairs_gen(tab, key)
     return key, key, value
 end
 
@@ -182,7 +182,7 @@ exports.foreach = exports.each
 
 local range_gen = function(param, state)
     local stop, step = param[1], param[2]
-    local state = state + step
+    state = state + step
     if state > stop then
         return nil
     end
@@ -191,7 +191,7 @@ end
 
 local range_rev_gen = function(param, state)
     local stop, step = param[1], param[2]
-    local state = state + step
+    state = state + step
     if state < stop then
         return nil
     end
@@ -1033,6 +1033,7 @@ exports.chain = chain
 -- Operators
 --------------------------------------------------------------------------------
 
+local operator = _G.operator
 if not operator then
     operator = {
         ----------------------------------------------------------------------------
@@ -1079,7 +1080,6 @@ if not operator then
         truth = function(a) return not not a end,
     }
 end
-
 exports.operator = operator
 methods.operator = operator
 exports.op = operator
